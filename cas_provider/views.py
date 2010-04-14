@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -5,13 +6,15 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout as auth_logout
 
-from cas_provider.forms import LoginForm
-from cas_provider.models import ServiceTicket, LoginTicket, auth_success_response
-from cas_provider.utils import create_service_ticket
+from .forms import LoginForm
+from .models import ServiceTicket, LoginTicket, auth_success_response
+from .utils import create_service_ticket
+
 
 __all__ = ['login', 'validate', 'service_validate', 'logout']
 
-def login(request, template_name='cas/login.html', success_redirect='/accounts/'):
+def login(request, template_name='cas/login.html',
+          success_redirect=settings.LOGIN_REDIRECT_URL):
     service = request.GET.get('service', None)
     if request.user.is_authenticated():
         if service is not None:
@@ -28,7 +31,7 @@ def login(request, template_name='cas/login.html', success_redirect='/accounts/'
         password = request.POST.get('password', None)
         service = request.POST.get('service', None)
         lt = request.POST.get('lt', None)
-        
+
         try:
             login_ticket = LoginTicket.objects.get(ticket=lt)
         except:
@@ -50,7 +53,8 @@ def login(request, template_name='cas/login.html', success_redirect='/accounts/'
                     errors.append('Incorrect username and/or password.')
     form = LoginForm(service)
     return render_to_response(template_name, {'form': form, 'errors': errors}, context_instance=RequestContext(request))
-    
+
+
 def validate(request):
     service = request.GET.get('service', None)
     ticket_string = request.GET.get('ticket', None)
@@ -64,6 +68,7 @@ def validate(request):
             pass
     return HttpResponse("no\n\n")
 
+
 def service_validate(request):
     service = request.GET.get('service', None)
     ticket_string = request.GET.get('ticket', None)
@@ -73,7 +78,7 @@ def service_validate(request):
                 Not all required parameters were sent.
             </cas:authenticationFailure>
         </cas:serviceResponse>''', mimetype='text/xml')
-    
+
     try:
         ticket = ServiceTicket.objects.get(ticket=ticket_string)
         ticket.delete()
@@ -84,6 +89,7 @@ def service_validate(request):
                 The provided ticket is invalid.
             </cas:authenticationFailure>
         </cas:serviceResponse>''', mimetype='text/xml')
+
 
 def logout(request, template_name='cas/logout.html'):
     url = request.GET.get('url', None)
