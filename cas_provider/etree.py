@@ -2,12 +2,12 @@
 try:
     # lxml http://codespeak.net/lxml/
     from lxml import etree
-    
+
     # Define register_namespace function and ElementRoot for proper serialization
     NSMAP = {}
     def register_namespace(prefix, uri):
         NSMAP[prefix] = uri
-    
+
     def ElementRoot(*args, **kwargs):
         kwargs['nsmap'] = NSMAP
         return etree.Element(*args, **kwargs)
@@ -18,7 +18,7 @@ except ImportError:
         import cElementTree as etree
     except ImportError:
         # normal ElementTree install
-        import elementtree.ElementTree as etree
+        import xml.etree.ElementTree as etree
 
     try:
         register_namespace = etree.register_namespace
