@@ -1,0 +1,20 @@
+# Local settings
+from settings import *
+
+DEV = True
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": "dev.db",
+        "USER": "",
+        "PASSWORD": "",
+        "HOST": "",
+        "PORT": "",
+    }
+}
+
+if DEV:
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    # EMAIL_FILE_PATH = os.path.join(PROJECT_ROOT, 'email_files')
