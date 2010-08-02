@@ -15,12 +15,8 @@ urlpatterns = patterns('',
     url(r'^users/logout/?$', 'cas_provider.views.logout', {
         'template_name': 'users/logout.html'}),
 
-    # order is important here: If both apps provide a URL, only the first one
-    # will match.
-    (r'^users/', include('cas_provider.urls')),
-    (r'^users/', include('registration.urls')),
-
     (r'^profile/', include('users.urls')),
+    (r'^users/', include('cas_provider.urls')),
 
     (r'^admin/', include(admin.site.urls)),
 )
