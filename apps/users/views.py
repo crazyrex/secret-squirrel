@@ -1,13 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.views.decorators.vary import vary_on_cookie
+
+import jingo
 
 
 @vary_on_cookie
 def display_profile(request):
-    return render_to_response(
-        'users/profile.html', context_instance=RequestContext(request))
+    return jingo.render(request, 'users/profile.html')
 
 
 @vary_on_cookie

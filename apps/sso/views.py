@@ -11,6 +11,7 @@ from .models import ClientSite
 log = logging.getLogger('sso.login')
 
 
+# TODO move this into cas_provider.
 def whitelist_login(request, *args, **kwargs):
     """
     Run service requests against whitelist before serving them through the

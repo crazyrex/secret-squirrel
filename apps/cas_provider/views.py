@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import render_to_response
-from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout as auth_logout
+
+import jingo
 
 from .forms import LoginForm
 from .models import ServiceTicket, LoginTicket, auth_success_response
@@ -52,7 +52,8 @@ def login(request, template_name='cas/login.html',
             else:
                     errors.append('Incorrect username and/or password.')
     form = LoginForm(service)
-    return render_to_response(template_name, {'form': form, 'errors': errors}, context_instance=RequestContext(request))
+    return jingo.render(request, template_name,
+                        {'form': form, 'errors': errors})
 
 
 def validate(request):
@@ -70,6 +71,7 @@ def validate(request):
     return HttpResponse("no\n\n")
 
 
+# TODO can probably remove this if secret squirrel won't use it.
 def service_validate(request):
     service = request.GET.get('service', None)
     ticket_string = request.GET.get('ticket', None)
@@ -95,4 +97,4 @@ def service_validate(request):
 def logout(request, template_name='cas/logout.html'):
     url = request.GET.get('url', None)
     auth_logout(request)
-    return render_to_response(template_name, {'url': url}, context_instance=RequestContext(request))
+    return jingo.render(request, template_name, {'return_url': url})

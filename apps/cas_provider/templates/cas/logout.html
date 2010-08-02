@@ -8,5 +8,5 @@ Logged out
     <h3>Logged out</h3>
 
     <p>You have successfully logged out. To ensure that you are logged out of all services, please close your browser.</p>
-    {% if url %}<p><a href="{{ url }}">Click here</a> to return to {{ url }}</p>{% endif %}
+    {% if return_url %}<p><a href="{{ return_url }}">Click here</a> to return to {{ return_url }}</p>{% endif %}
 {% endblock %}
