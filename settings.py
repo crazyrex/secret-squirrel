@@ -79,6 +79,15 @@ ADMIN_MEDIA_PREFIX = '/admin-media/'
 SECRET_KEY = 'bi)(czxyf#e68_bg4lvx!7o*v&ggnz*@()w$z-0injzc#0&)l_'
 
 # Templates
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.core.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.media',
+    'django.core.context_processors.request',
+    'django.core.context_processors.csrf',
+
+    'sso.context_processors.now',
+)
 
 TEMPLATE_DIRS = (
     path('templates'),
@@ -90,6 +99,15 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 #     'django.template.loaders.eggs.Loader',
 )
+
+def JINJA_CONFIG():
+    import jinja2
+    # TODO replace 'jinja2.ext.i18n' with 'tower.template.i18n' when we're
+    # actually doing L10n.
+    config = {'extensions': ['jinja2.ext.i18n', 'jinja2.ext.loopcontrols',
+                             'jinja2.ext.with_'],
+              'finalize': lambda x: x if x is not None else ''}
+    return config
 
 
 MIDDLEWARE_CLASSES = (
