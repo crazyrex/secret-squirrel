@@ -4,7 +4,7 @@ Django==1.2.1
 -e git://github.com/jbalogh/jingo.git#egg=jingo
 
 # Authentication
-django-registration==0.7
+-e hg+http://bitbucket.org/ubernostrum/django-registration#egg=django-registration
 -e git://github.com/fwenzel/django-cas-provider.git#egg=cas_provider
 
 # Caching
