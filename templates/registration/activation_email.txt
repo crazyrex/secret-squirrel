@@ -1,6 +1,0 @@
-Thank you for registering at {{ site.name }}. Go to the following website
-to activate your account:
-
-http://{{ site.domain }}{% url registration_activate activation_key %}
-
-Please note: This link is only valid for {{ expiration_days }} days.
