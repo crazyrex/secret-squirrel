@@ -1,0 +1,3 @@
+Chris Williams <chris@nitron.org>
+Marek Stepniowski <marek@stepniowski.com>
+Fred Wenzel <fwenzel@mozilla.com>
