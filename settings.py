@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 # Django settings for the secret_squirrel project.
 
-import os
 import logging
+import os
+import socket
 
 # Make filepaths relative to settings.
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -26,8 +27,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'squirrel',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'USER': 'root',                      # Not used with sqlite3.
+        'PASSWORD': 'pass',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {'init_command': 'SET storage_engine=InnoDB'},
@@ -60,6 +61,19 @@ SITE_ID = 1
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
+
+# The host currently running the site.  Only use this in code for good reason;
+# the site is designed to run on a cluster and should continue to support that
+HOSTNAME = socket.gethostname()
+
+# The front end domain of the site. If you're not running on a cluster this
+# might be the same as HOSTNAME but don't depend on that.  Use this when you
+# need the real domain.
+DOMAIN = HOSTNAME
+
+# Full base URL for your main site including protocol.  No trailing slash.
+#   Example: https://addons.mozilla.org
+SITE_URL = 'http://%s' % DOMAIN
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
@@ -130,7 +144,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 
     'cas_provider',
-    'registration',
+#    'registration',
 
     'sso',
     'users',

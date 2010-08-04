@@ -1,15 +1,15 @@
-import logging
+
 from urlparse import urlparse
 
 from django.http import HttpResponseForbidden, HttpResponseRedirect
+
+import commonware.log
 
 import cas_provider.views
 
 from .models import ClientSite
 
-
-log = logging.getLogger('sso.login')
-
+log = commonware.log.getLogger('sso.sso')
 
 # TODO move this into cas_provider.
 def whitelist_login(request, *args, **kwargs):
@@ -25,7 +25,6 @@ def whitelist_login(request, *args, **kwargs):
     try:
         site = ClientSite.objects.get(domain=parsed.netloc)
     except ClientSite.DoesNotExist:
-        log.warning('Login request for invalid service URL %s' % service)
         return HttpResponseForbidden('Invalid service URL.')
 
     response = cas_provider.views.login(request, *args, **kwargs)

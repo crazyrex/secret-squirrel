@@ -15,6 +15,7 @@ DATABASES = {
 }
 
 if DEV:
-    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+    #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     # EMAIL_FILE_PATH = os.path.join(PROJECT_ROOT, 'email_files')

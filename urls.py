@@ -11,12 +11,16 @@ urlpatterns = patterns('',
     # Hook up login/logout separately from the following apps
 
     # Login through service whitelist
+    # Users
+    ('', include('users.urls')),
+
     url(r'^users/login/?$', 'sso.views.whitelist_login'),
-    url(r'^users/logout/?$', 'cas_provider.views.logout', {
-        'template_name': 'users/logout.html'}),
+    #url(r'^users/logout/?$', 'cas_provider.views.logout', {
+    #    'template_name': 'users/logout.html'}),
 
     (r'^profile/', include('users.urls')),
-    (r'^users/', include('cas_provider.urls')),
+    #(r'^users/', include('cas_provider.urls')),
+    url(r'^users/login/?$', 'login', name='cas_login'), #aok
 
     (r'^admin/', include(admin.site.urls)),
 )

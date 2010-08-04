@@ -1,10 +1,11 @@
 # Essentials
 Django==1.2.1
+pytz==2010e
 -e git://github.com/jbalogh/django-multidb-router.git#egg=django-multidb-router
 -e git://github.com/jbalogh/jingo.git#egg=jingo
 
-# Authentication
--e git://github.com/fwenzel/django-cas-provider.git#egg=cas_provider
+-e git://github.com/clouserw/tower.git#egg=tower
+-e git://github.com/jsocol/commonware.git#egg=commonware
 
 # Caching
 python-memcached==1.45

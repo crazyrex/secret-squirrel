@@ -1,17 +1,21 @@
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseRedirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
 from django.contrib.auth import login as auth_login, logout as auth_logout
 
+import commonware.log
 import jingo
 
 from .forms import LoginForm
 from .models import ServiceTicket, LoginTicket, auth_success_response
 from .utils import create_service_ticket
 
+# Maybe this is a bad idea... was 'from django.contrib.auth import authenticate'login
+from users.models import authenticate
 
 __all__ = ['login', 'validate', 'service_validate', 'logout']
+
+log = commonware.log.getLogger('sso.cas_provider')
 
 def login(request, template_name='cas/login.html',
           success_redirect=settings.LOGIN_REDIRECT_URL):
