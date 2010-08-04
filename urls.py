@@ -8,15 +8,8 @@ admin.autodiscover()
 urlpatterns = patterns('',
     ('', include('sso.urls')),
 
-    # Hook up login/logout separately from the following apps
-
-    # Login through service whitelist
-    url(r'^users/login/?$', 'sso.views.whitelist_login'),
-    url(r'^users/logout/?$', 'cas_provider.views.logout', {
-        'template_name': 'users/logout.html'}),
-
-    (r'^profile/', include('users.urls')),
     (r'^users/', include('cas_provider.urls')),
+    (r'^profile/', include('users.urls')),
 
     (r'^admin/', include(admin.site.urls)),
 )
