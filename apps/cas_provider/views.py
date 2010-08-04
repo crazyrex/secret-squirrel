@@ -38,6 +38,7 @@ def _login(request, template_name='cas/login.html',
                 return HttpResponseRedirect(service + '&ticket=' + ticket.ticket)
         else:
             return HttpResponseRedirect(success_redirect)
+
     errors = []
     if request.method == 'POST':
         username = request.POST.get('username', None)
