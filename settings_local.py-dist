@@ -13,6 +13,9 @@ DATABASES = {
         "PASSWORD": "",
         "HOST": "",
         "PORT": "",
+        'OPTIONS': {'init_command': 'SET storage_engine=InnoDB'},
+        'TEST_CHARSET': 'utf8',
+        'TEST_COLLATION': 'utf8_general_ci',
     }
 }
 
@@ -20,3 +23,5 @@ if DEV:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     # EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     # EMAIL_FILE_PATH = os.path.join(PROJECT_ROOT, 'email_files')
+
+    SESSION_COOKIE_SECURE = False

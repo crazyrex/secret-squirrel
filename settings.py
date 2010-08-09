@@ -31,6 +31,8 @@ DATABASES = {
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
         'OPTIONS': {'init_command': 'SET storage_engine=InnoDB'},
+        'TEST_CHARSET': 'utf8',
+        'TEST_COLLATION': 'utf8_general_ci',
     }
 }
 
@@ -111,6 +113,8 @@ def JINJA_CONFIG():
 
 
 MIDDLEWARE_CLASSES = (
+    'sso.middleware.HttpOnlyMiddleware',  # needs to be before AuthMiddleware
+
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,6 +139,18 @@ INSTALLED_APPS = (
     'sso',
     'users',
 )
+
+# Tests
+TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
+
+# Security settings
+# Default to short expiration; check "remember me" to override
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1209600
+SESSION_COOKIE_SECURE = True
+
+# Cookie names that should NOT have the HttpOnly flag set.
+JAVASCRIPT_READABLE_COOKIES = ()
 
 # Emails
 DEFAULT_FROM_EMAIL = 'nobody@mozilla.org'
