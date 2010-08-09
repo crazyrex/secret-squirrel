@@ -144,9 +144,9 @@ INSTALLED_APPS = (
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
 
 # Security settings
-# Default to short expiration; check "remember me" to override
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 1209600
+# Default to 1 week expiration
+SESSION_COOKIE_AGE = 7 * 24 * 60 * 60
 SESSION_COOKIE_SECURE = True
 
 # Cookie names that should NOT have the HttpOnly flag set.
