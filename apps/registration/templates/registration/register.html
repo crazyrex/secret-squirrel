@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Create an account{% endblock %}
+
+{% block content %}
+  {% if form.errors %}
+    <h2>Problems with Account Information</h2>
+    <p>Please review your information, there were errors.</p>
+  {% endif %}
+  <form action="{{ url('sso_register') }}" method="post">
+    <fieldset>
+      <legend>Create an account</legend>
+     <table class="form-feilds">
+        {{ form.as_table()|safe }}
+     </table>
+     <p><input type="submit" value="Register Account" /></p>
+    </fieldset>
+  </form>
+{% endblock %}
+ 
