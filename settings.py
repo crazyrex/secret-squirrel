@@ -135,6 +135,7 @@ INSTALLED_APPS = (
 
     'cas_provider',
 
+    'registration',
     'sso',
     'users',
 )
