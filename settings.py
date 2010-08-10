@@ -137,7 +137,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 
     'cas_provider',
-    'registration',
     'sso',
     'users',
 )
