@@ -5,6 +5,7 @@
 -r prod.txt
 
 # Testing
+mock==0.7.0b2
 nose==0.11.4
 -e git://github.com/jbalogh/test-utils.git#egg=test-utils
 -e git://github.com/jbalogh/django-nose.git#egg=django_nose

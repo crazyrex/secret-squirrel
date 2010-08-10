@@ -144,6 +144,7 @@ INSTALLED_APPS = (
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
 
 # Security settings
+
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Default to 1 week expiration
 SESSION_COOKIE_AGE = 7 * 24 * 60 * 60
@@ -151,6 +152,9 @@ SESSION_COOKIE_SECURE = True
 
 # Cookie names that should NOT have the HttpOnly flag set.
 JAVASCRIPT_READABLE_COOKIES = ()
+
+# Service ticket expiration, in seconds, 0 means no expiration.
+SERVICE_TICKET_TIMEOUT = 30
 
 # Emails
 DEFAULT_FROM_EMAIL = 'nobody@mozilla.org'

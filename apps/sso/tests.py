@@ -1,6 +1,5 @@
-import test_utils
-
 from nose.tools import eq_
+import test_utils
 
 from django.conf import settings
 from django.contrib.auth.models import User

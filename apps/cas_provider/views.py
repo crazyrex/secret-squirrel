@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import logging
 from urlparse import urlparse
 
@@ -102,18 +103,45 @@ def whitelist_login(request, *args, **kwargs):
 
 
 def validate(request):
+    """Validation of a service ticket by a client app."""
     service = request.GET.get('service', None)
     ticket_string = request.GET.get('ticket', None)
-    if service is not None and ticket_string is not None:
-        try:
-            ticket = ServiceTicket.objects.get(ticket=ticket_string)
-            assert not ticket.service or ticket.service == service
-            username = ticket.user.username
-            ticket.delete()
-            return HttpResponse("yes\n%s\n" % username)
-        except:
-            pass
-    return HttpResponse("no\n\n")
+
+    failed = lambda: HttpResponse("no\n\n")
+
+    if service is None or ticket_string is None:
+        return failed()
+
+    try:
+        ticket = ServiceTicket.objects.get(ticket=ticket_string)
+    except ServiceTicket.DoesNotExist:
+        log.warning('Validation request for unknown ticket. Service: %s' % (
+            service))
+        return failed()
+
+    # Issued-for and validating service must match
+    try:
+        assert not ticket.service or ticket.service == service
+    except AssertionError:
+        log.warning('Service %s tried to validate a ticket issued '
+                    'for %s.' % (service, ticket.service))
+        return failed()
+
+    # Ticket must not be expired.
+    try:
+        assert (settings.SERVICE_TICKET_TIMEOUT == 0 or
+                ticket.created > (datetime.now() - (
+                    timedelta(seconds=settings.SERVICE_TICKET_TIMEOUT))))
+    except AssertionError:
+        log.warning('Validation request for expired ticket. Service: '
+                    '%s. User: %s' % (ticket.service, ticket.user.username))
+        ticket.delete()
+        return failed()
+
+    # Everything all right. Delete ticket, return success message.
+    username = ticket.user.username
+    ticket.delete()
+    return HttpResponse("yes\n%s\n" % username)
 
 
 def logout(request, template_name='cas/logout.html'):
