@@ -140,6 +140,8 @@ INSTALLED_APPS = (
     'users',
 )
 
+AUTH_PROFILE_MODULE = 'users.UserProfile'
+
 # Tests
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
 
