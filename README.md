@@ -29,3 +29,22 @@ to install the required Python libraries.
 The Internet has plenty of of documentation on setting up a Django application
 with any web server. If you need a wsgi entry point, you can find one in
 ``wsgi/squirrel.wsgi``.
+
+### Whitelist
+For each website which you want to SSO enable, you'll need to add them to the whitelist.
+
+1. http://localhost:8001/admin
+
+  Login with admin user
+
+2. Client Sites > Click Add 
+
+  *Note:* Don't confuse [Sites](http://docs.djangoproject.com/en/dev/ref/contrib/sites/) with Client Sites... They have very similar inputs and similar names.
+
+3. Enter Details
+
+  *Example:* 
+    Name: PHP Example App
+    Domain: phpclient.secretsquirr.el
+    Match priority: 0
+  Click Save
