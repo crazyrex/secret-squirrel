@@ -24,3 +24,9 @@ class MiddlewareTestCase(test_utils.TestCase):
         for name in r.cookies:
             if name not in settings.JAVASCRIPT_READABLE_COOKIES:
                 eq_(bool(r.cookies[name].get('httponly')), True)
+
+    def test_x_frame_options(self):
+        """Ensure our pages must not be iframed."""
+        r = self.client.get(reverse('cas_login'))
+        eq_(r.status_code, 200)
+        eq_(r['x-frame-options'], 'DENY')
