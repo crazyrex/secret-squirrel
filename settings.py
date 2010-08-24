@@ -121,6 +121,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+
+    'commonware.middleware.FrameOptionsHeader',
 )
 
 ROOT_URLCONF = '%s.urls' % ROOT_PACKAGE
@@ -134,7 +136,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 
     'cas_provider',
-
     'registration',
     'sso',
     'users',
