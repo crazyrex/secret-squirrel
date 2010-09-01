@@ -18,6 +18,7 @@ def display_profile(request):
 def edit_profile(request):
     return HttpResponse('edit profile page')
 
+
 def register(request):
     """ Given a username, email, and password, creates a new user """
 

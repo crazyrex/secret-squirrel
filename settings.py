@@ -113,10 +113,11 @@ def JINJA_CONFIG():
 
 
 MIDDLEWARE_CLASSES = (
+    'commonware.middleware.SetRemoteAddrFromForwardedFor', # First, so all others see the right IP
     'sso.middleware.HttpOnlyMiddleware',  # needs to be before AuthMiddleware
-
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'paranoidsessions.ParanoidSessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.csrf.CsrfResponseMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -147,7 +148,6 @@ AUTH_PROFILE_MODULE = 'users.UserProfile'
 TEST_RUNNER = 'test_utils.runner.RadicalTestSuiteRunner'
 
 # Security settings
-
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 # Default to 1 week expiration
 SESSION_COOKIE_AGE = 7 * 24 * 60 * 60
@@ -156,8 +156,12 @@ SESSION_COOKIE_SECURE = True
 # Cookie names that should NOT have the HttpOnly flag set.
 JAVASCRIPT_READABLE_COOKIES = ()
 
-# Service ticket expiration, in seconds, 0 means no expiration.
+# CAS Service ticket expiration, in seconds, 0 means no expiration.
 SERVICE_TICKET_TIMEOUT = 30
+
+# django-paranoid-sessions settings
+PSESSION_CHECK_HEADERS = ('REMOTE_ADDR',)  # Check remote IP address
+PSESSION_NONCE_TIMEOUT = None  # No nonce cookies for now
 
 # Emails
 DEFAULT_FROM_EMAIL = 'nobody@mozilla.org'

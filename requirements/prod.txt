@@ -4,5 +4,8 @@ Django==1.2.1
 -e git://github.com/jbalogh/jingo.git#egg=jingo
 -e git://github.com/jsocol/commonware.git#egg=commonware
 
+# Security
+-e git://github.com/rfk/django-paranoid-sessions.git#egg=paranoidsessions
+
 # Caching
 python-memcached==1.45
