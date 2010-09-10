@@ -8,8 +8,6 @@ urlpatterns = patterns('',
     ('', include('sso.urls')),
     (r'^users/', include('cas_provider.urls')),
     (r'^profile/', include('users.urls')),
-    (r'^deki/', include('deki.urls')),
-
     (r'^admin/', include(admin.site.urls)),
 )
 
