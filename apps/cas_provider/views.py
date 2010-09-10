@@ -14,11 +14,30 @@ from sso.models import ClientSite
 
 from .forms import LoginForm
 from .models import ServiceTicket, LoginTicket, auth_success_response
-from .utils import create_service_ticket
-
+import utils
 
 log = logging.getLogger('sso.login')
 
+"""
+Notes on CAS 1.0 versus 2.0
+1.0 
+  login
+  validate
+  TGC - Ticket Granting Cookie
+  ST  - Service Ticket
+  Plain text response format
+
+2.0 Adds the following:
+  XML response format
+  gateway parameter - Checks for Authentication but doesn't force login
+  renew parameter   - Force login no matter what
+
+2.0 features which are *not implemented* in secret-squirrel cas_provider:
+  Proxy/Target 
+  PGT - Proxy Granting Ticket
+  PGTIOU - Proxy Granting Ticket I Owe you
+  PT - Proxy Ticket
+"""
 
 def _login(request, template_name='cas/login.html',
           success_redirect=settings.LOGIN_REDIRECT_URL):
@@ -30,9 +49,10 @@ def _login(request, template_name='cas/login.html',
     """
 
     service = request.GET.get('service', None)
-    if request.user.is_authenticated():
+    # renew=true indicates that we should force the user to login
+    if False == request.GET.get('renew', False) and request.user.is_authenticated():
         if service is not None:
-            ticket = create_service_ticket(request.user, service)
+            ticket = utils.create_service_ticket(request.user, service)
             if service.find('?') == -1:
                 return HttpResponseRedirect(service + '?ticket=' + ticket.ticket)
             else:
@@ -40,6 +60,9 @@ def _login(request, template_name='cas/login.html',
         else:
             return HttpResponseRedirect(success_redirect)
 
+    # gateway=true indicates that we should silently try to authenticate (no login screen)
+    if request.GET.get('gateway', False):
+        return HttpResponseRedirect(service)
     errors = []
     if request.method == 'POST':
         username = request.POST.get('username', None)
@@ -58,7 +81,7 @@ def _login(request, template_name='cas/login.html',
                 if user.is_active:
                     auth_login(request, user)
                     if service is not None:
-                        ticket = create_service_ticket(user, service)
+                        ticket = utils.create_service_ticket(user, service)
                         return HttpResponseRedirect(service + '?ticket=' + ticket.ticket)
                     else:
                         return HttpResponseRedirect(success_redirect)
@@ -99,33 +122,51 @@ def whitelist_login(request, *args, **kwargs):
                 log.debug(
                     'First-time association of user %s with service %s' % (
                         request.user.username, site.domain))
+
     return response
 
 
+
 def validate(request):
-    """Validation of a service ticket by a client app."""
+    """ CAS 1.0 Callback to validate a Service Ticket (ST)"""
+    return _common_validate(request, utils.unauthorized_cas_1_0, utils.ok_cas_1_0)
+
+def service_validate(request):
+    """ CAS 2.0 Callback to validate a Service Ticket (ST)"""
+    return _common_validate(request, utils.unauthorized_cas_2_0, utils.ok_cas_2_0)
+
+def _common_validate(request, failed_fn, success_fn):
+    """ Common Validation logic which will either fail or succeed.
+        request - Django request
+        failed_fn - A function which takes two optional parameters 
+                    (string error code and string error message) 
+                    and returns a HttpResponse
+        success_fn - A function which takes one argument 
+                    (string username) and returns a HttpResponse
+        The HttpResponse must be a valid CAS response
+    """
     service = request.GET.get('service', None)
     ticket_string = request.GET.get('ticket', None)
 
-    failed = lambda: HttpResponse("no\n\n")
-
-    if service is None or ticket_string is None:
-        return failed()
+    if service is None:
+        return failed_fn('INVALID_SERVICE', 'Missing service parameter')
+    if ticket_string is None:
+        return failed_fn('INVALID_TICKET', 'Missing ticket parameter')
 
     try:
         ticket = ServiceTicket.objects.get(ticket=ticket_string)
     except ServiceTicket.DoesNotExist:
-        log.warning('Validation request for unknown ticket. Service: %s' % (
-            service))
-        return failed()
+        log.warning('INVALID Validation request for unknown ticket. Ticket: %s' % (
+            ticket_string))
+        return failed_fn('INVALID_TICKET', 'Ticket [%s] is not valid' % ticket_string)
 
     # Issued-for and validating service must match
-    try:
-        assert not ticket.service or ticket.service == service
-    except AssertionError:
-        log.warning('Service %s tried to validate a ticket issued '
-                    'for %s.' % (service, ticket.service))
-        return failed()
+    if not ticket.service or ticket.service != service:
+        error_message = "INVALID Service [%s] tried to validate a ticket issued for [%s]." % (
+            service, ticket.service)
+        log.warning(error_message)
+        # TODO... this is failing because mod_auth_cas is appending an extra title parameter causing this to fail...
+        return failed_fn('INVALID_SERVICE', error_message)
 
     # Ticket must not be expired.
     try:
@@ -133,15 +174,16 @@ def validate(request):
                 ticket.created > (datetime.now() - (
                     timedelta(seconds=settings.SERVICE_TICKET_TIMEOUT))))
     except AssertionError:
-        log.warning('Validation request for expired ticket. Service: '
-                    '%s. User: %s' % (ticket.service, ticket.user.username))
+        error_message = "INVALID Validation request for expired ticket. Service: %s. Ticket: %s User: %s" % (
+            ticket.service, ticket_string, ticket.user.username)
+        log.warning(error_message)
         ticket.delete()
-        return failed()
+        return failed_fn('INVALID_TICKET', error_message)
 
     # Everything all right. Delete ticket, return success message.
     username = ticket.user.username
     ticket.delete()
-    return HttpResponse("yes\n%s\n" % username)
+    return success_fn(username)
 
 
 def logout(request, template_name='cas/logout.html'):
