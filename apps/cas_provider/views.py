@@ -20,7 +20,7 @@ log = logging.getLogger('sso.login')
 
 """
 Notes on CAS 1.0 versus 2.0
-1.0 
+1.0
   login
   validate
   TGC - Ticket Granting Cookie
@@ -33,7 +33,7 @@ Notes on CAS 1.0 versus 2.0
   renew parameter   - Force login no matter what
 
 2.0 features which are *not implemented* in secret-squirrel cas_provider:
-  Proxy/Target 
+  Proxy/Target
   PGT - Proxy Granting Ticket
   PGTIOU - Proxy Granting Ticket I Owe you
   PT - Proxy Ticket
@@ -49,10 +49,11 @@ def _login(request, template_name='cas/login.html',
     """
 
     service = request.GET.get('service', None)
-    # renew=true indicates that we should force the user to login
+    # renew=true indicates that we should force the user to log in.
     if False == request.GET.get('renew', False) and request.user.is_authenticated():
         if service is not None:
             ticket = utils.create_service_ticket(request.user, service)
+            # TODO Parsing and rebuilding the URL here is a much better idea.
             if service.find('?') == -1:
                 return HttpResponseRedirect(service + '?ticket=' + ticket.ticket)
             else:
@@ -60,7 +61,8 @@ def _login(request, template_name='cas/login.html',
         else:
             return HttpResponseRedirect(success_redirect)
 
-    # gateway=true indicates that we should silently try to authenticate (no login screen)
+    # gateway=true indicates that we should silently try to authenticate (no
+    # login screen).
     if request.GET.get('gateway', False):
         return HttpResponseRedirect(service)
     errors = []
@@ -138,10 +140,10 @@ def service_validate(request):
 def _common_validate(request, failed_fn, success_fn):
     """ Common Validation logic which will either fail or succeed.
         request - Django request
-        failed_fn - A function which takes two optional parameters 
-                    (string error code and string error message) 
+        failed_fn - A function which takes two optional parameters
+                    (string error code and string error message)
                     and returns a HttpResponse
-        success_fn - A function which takes one argument 
+        success_fn - A function which takes one argument
                     (string username) and returns a HttpResponse
         The HttpResponse must be a valid CAS response
     """
