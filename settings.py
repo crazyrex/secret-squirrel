@@ -142,6 +142,7 @@ INSTALLED_APPS = (
     'users',
 )
 
+AUTHENTICATION_BACKENDS = ('users.auth.Sha256Backend',)
 AUTH_PROFILE_MODULE = 'users.UserProfile'
 
 # Tests
