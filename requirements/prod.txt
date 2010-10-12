@@ -1,5 +1,5 @@
 # Essentials
-Django==1.2.1
+Django==1.2.3
 -e git://github.com/jbalogh/django-multidb-router.git#egg=django-multidb-router
 -e git://github.com/jbalogh/jingo.git#egg=jingo
 -e git://github.com/jsocol/commonware.git#egg=commonware
