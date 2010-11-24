@@ -163,7 +163,7 @@ def _common_validate(request, failed_fn, success_fn):
         return failed_fn('INVALID_TICKET', 'Ticket [%s] is not valid' % ticket_string)
 
     # Issued-for and validating service must match
-    if not ticket.service or ticket.service != service:
+    if not ticket.service or ticket.service not in service:
         error_message = "INVALID Service [%s] tried to validate a ticket issued for [%s]." % (
             service, ticket.service)
         log.warning(error_message)
@@ -185,7 +185,7 @@ def _common_validate(request, failed_fn, success_fn):
     # Everything all right. Delete ticket, return success message.
     username = ticket.user.username
     ticket.delete()
-    return success_fn(username)
+    return success_fn(username, ticket.user.userprofile.sso_uuid)
 
 
 def logout(request, template_name='cas/logout.html'):

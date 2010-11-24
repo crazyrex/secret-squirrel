@@ -54,10 +54,10 @@ def unauthorized_cas_2_0(error_code='', error_message=''):
 
     return HttpResponse(resp.toxml('utf8'), 'application/xml')
 
-def ok_cas_1_0(username):
+def ok_cas_1_0(username, sso_uuid):
     return HttpResponse("yes\n%s\n" % username)
 
-def ok_cas_2_0(username):
+def ok_cas_2_0(username, sso_uuid):
     """
     <cas:serviceResponse xmlns:cas='http://www.yale.edu/tp/cas'>
         <cas:authenticationSuccess>
@@ -69,7 +69,12 @@ def ok_cas_2_0(username):
     authSuccess = doc.createElement('cas:authenticationSuccess')
     casUser = doc.createElement('cas:user')
     casUser.appendChild(doc.createTextNode(username))
+    casAttrs = doc.createElement('cas:attributes')
+    casUuid = doc.createElement('cas:uuid')
+    casUuid.appendChild(doc.createTextNode(sso_uuid))
+    casAttrs.appendChild(casUuid)
     authSuccess.appendChild(casUser)
+    authSuccess.appendChild(casAttrs)
 
     resp.appendChild(authSuccess)
     return HttpResponse( resp.toxml('utf8'), 'application/xml')
