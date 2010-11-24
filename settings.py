@@ -25,11 +25,11 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'squirrel',                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+        'NAME': 'squirrel',
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
         'OPTIONS': {'init_command': 'SET storage_engine=InnoDB'},
         'TEST_CHARSET': 'utf8',
         'TEST_COLLATION': 'utf8_general_ci',
@@ -137,7 +137,6 @@ INSTALLED_APPS = (
     'django.contrib.messages',
 
     'cas_provider',
-    'registration',
     'sso',
     'users',
 )
